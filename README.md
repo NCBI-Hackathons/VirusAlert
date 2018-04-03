@@ -6,8 +6,10 @@ Discovery and validation of viruses using long read technology
 Install
 -------
 
-Run the top-level [install.sh]() script to download dependencies + data files,
-and [run.sh]() to run the analysis.
+Run the top-level [install.sh]() script.
+It will install dependencies in the tools directory,
+and data files in the data directory.
+Then use [run.sh]() to run the analysis.
 
 Biollante
 ---------
