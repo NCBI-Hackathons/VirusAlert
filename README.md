@@ -22,10 +22,7 @@ VirFinder
  <img src="./images/LongReadVirusesWorkflowII.png" width="900">
 
 
-1 Inputs
--------
-All data passed into used in LongReadViruses should be long read PacBio shotgun metadata. 
-Three inputs are required
+
 
 Install
 -------
@@ -46,6 +43,10 @@ Run [longreadviruses.py][2]. See [usage.txt][3] for command line options.
 [1]: install.sh
 [2]: longreadviruses.py
 [3]: usage.txt
+
+Inputs
+------
+All data passed into used in LongReadViruses should be long read PacBio shotgun metadata and passed in the form of a SRA Run Accession (SRR). 
 
 Rough Plan
 ----------
