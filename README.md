@@ -18,7 +18,7 @@ VirFinder
  
  Workflow
  -------
- <img src="./images/LongReadVirusesWorkflowII.png" width="300">
+ <img src="./images/LongReadVirusesWorkflowII.png" width="900">
 
 
 Install
