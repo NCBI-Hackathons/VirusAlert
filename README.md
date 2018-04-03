@@ -1,7 +1,6 @@
-LongReadViruses
-===============
-
 <img src="./images/virus-button.png" width="300">
+
+# LongReadViruses
 
 Discovery and validation of viruses using long read technology
 
