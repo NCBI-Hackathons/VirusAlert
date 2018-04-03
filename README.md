@@ -19,7 +19,7 @@ VirFinder
  
  Workflow
  -------
- <img src="./images/LongReadVirusesWorkflowII.png" width="900">
+ <img src="./images/LongReadVirusesWorkflowII.v.2.png" width="900">
 
 
 
