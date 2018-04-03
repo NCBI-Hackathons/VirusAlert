@@ -38,12 +38,12 @@ Rough Plan
 ----------
 
 1. Install (if not present) any BLAST dependencies, R, then VirFinder, and any pip dependencies (docopt):
-#
-    sh install.sh
+
+        sh install.sh
 
 2. Run program with sample options:
-#
-    python3 longreadviruses.py -d <database-path> -i <input-fasta-path> -o <output-results-directory-path>
+
+        python3 longreadviruses.py -d <database-path> -i <input-fasta-path> -o <output-results-directory-path>
 
 This should:
 
