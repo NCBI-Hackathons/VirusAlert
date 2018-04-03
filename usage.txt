@@ -1,0 +1,17 @@
+Discovery and validation of viruses using long read technology
+
+Usage:
+  longreadviruses --help | --version
+  longreadviruses [-v] [-c CONTDB] -i INPUTS -t INTYPE -o WORKDIR
+
+Options:
+--help              Print this help text.
+--version           Print version number.
+-v|--verbose        Print a lot of random debugging information. [default: true]
+-i|--inputs INPUTS  One or more SRR numbers or fastq/a file paths as input,
+                    e.g. SRR5150787 or testfile.fq [default: SRR5150787]
+-o|--outdir OUTDIR  Working directory and where to save results [default: analysis]
+-t|--intype INTYPE  Type of input provided - can be either srr, fasta or fastq
+                    [default: srr]
+-c|--contdb CONTDB  Contamination database to use. Default is to download and
+                    install the RefSeq viral database.
