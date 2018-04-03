@@ -43,7 +43,7 @@ Rough Plan
 
 2. Run program with sample options:
 
-        python3 longreadviruses.py -d <database-path> -i <input-fasta-path> -o <output-results-directory-path>
+        python3 longreadviruses.py -i <input-fasta-path> -o <output-results-directory-path>
 
 This should:
 
