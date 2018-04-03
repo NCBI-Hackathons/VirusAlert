@@ -17,8 +17,13 @@ VirFinder
 Install
 -------
 
-Run the top-level [install.sh][1] script.
-It will install dependencies in the tools directory, and data files in the data directory.
+First, clone the repository:
+
+    git clone https://github.com/NCBI-Hackathons/LongReadViruses.git
+
+Next, run the top-level [install.sh][1] script.
+
+This will install dependencies in the tools directory, and test data files in the data directory.
 
 Usage
 -----
@@ -32,23 +37,15 @@ Run [longreadviruses.py][2]. See [usage.txt][3] for command line options.
 Rough Plan
 ----------
 
-git clone https://github.com/NCBI-Hackathons/LongReadViruses.git
-
-#. Install (if not present) any BLAST dpeendencies, R, then VirFinder, and any pip dependencies (docopt).
-
-::
+1. Install (if not present) any BLAST dependencies, R, then VirFinder, and any pip dependencies (docopt).
 
     sh install.sh
 
-#. Run program with sample options.
-
-::
+2. Run program with sample options.
 
     python3 longreadviruses.py -d <database-path> -i <input-fasta-path> -o <output-results-directory-path>
 
 This should:
-
-::
 
     1. Fetch the fasta data from the SRR code.
     2. Run the fasta data with VirFinder.
