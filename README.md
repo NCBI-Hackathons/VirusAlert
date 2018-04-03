@@ -13,6 +13,13 @@ https://docs.google.com/presentation/d/125WTRdU_TjUtEwrDlG9p-orZDJxauGQl7ojDjvmw
 VirFinder
 ---------
  a novel k-mer based tool for identifying viral sequences from assembled metagenomic data
+ GitHub: https://github.com/jessieren/VirFinder
+ NCBI: https://www.ncbi.nlm.nih.gov/pubmed/28683828
+ 
+ Workflow
+ -------
+ <img src="./images/LongReadVirus.png" width="300">
+
 
 Install
 -------
