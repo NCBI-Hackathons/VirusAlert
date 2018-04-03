@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 # comment out when done working on it:
 SCRIPT_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
