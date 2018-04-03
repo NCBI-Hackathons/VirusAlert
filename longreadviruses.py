@@ -3,24 +3,18 @@
 from docopt import docopt
 
 def parse(args):
-  top, bottom, left, right = margins(args['-m'])
-  nrow, ncol = dimensions(args['-d'])
   return {
     'verbose' : args['-v'],
-    'prefix'  : args['-p'],
-    'top'     : top,
-    'bottom'  : bottom,
-    'left'    : left,
-    'right'   : right,
-    'side'    : pixels(args['-s']),
-    'nchar'   : int(args['-n']),
-    'nrow'    : nrow,
-    'ncol'    : ncol,
-    'pdfpath' : args['PDFPATH']
+    'inputs'  : args['-i'],
+    'outdir'  : args['-o'],
+    'intype'  : args['-t'],
+    'contdb'  : args['-c']
   }
 
 def main():
-  print parse(docopt(__doc__, version='longreadviruses 0.1'))
+  with open('usage.txt', 'r') as f:
+    args = docopt(f.read(), version='longreadviruses 0.1')
+  print parse(args)
 
 if __name__ == '__main__':
   main()

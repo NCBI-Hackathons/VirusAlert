@@ -8,3 +8,7 @@ export PATH=$TOOLS_DIR:$PATH
 for tool in virfinder virusfriends; do
   ./${tool}/install.sh 2>&1 | tee ${tool}/install.log
 done
+
+echo "installing longreadviruses dependencies..."
+sudo apt-get install python-docopt
+# TODO install the script itself?
