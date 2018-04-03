@@ -48,6 +48,12 @@ Inputs
 ------
 All data passed into used in LongReadViruses should be long read PacBio shotgun metadata and passed in the form of a SRA Run Accession (SRR). 
 
+
+Sample Output
+------------
+ <img src="./images/SampleGraph.png" width="900">
+
+
 Rough Plan
 ----------
 
