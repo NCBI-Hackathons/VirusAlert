@@ -29,4 +29,28 @@ Run [longreadviruses.py][2]. See [usage.txt][3] for command line options.
 [2]: longreadviruses.py
 [3]: usage.txt
 
+Rough Plan
+----------
 
+git clone https://github.com/NCBI-Hackathons/LongReadViruses.git
+
+#. Install (if not present) any BLAST dpeendencies, R, then VirFinder, and any pip dependencies (docopt).
+
+::
+
+    sh install.sh
+
+#. Run program with sample options.
+
+::
+
+    python3 longreadviruses.py -d <database-path> -i <input-fasta-path> -o <output-results-directory-path>
+
+This should:
+
+::
+
+    1. Fetch the fasta data from the SRR code.
+    2. Run the fasta data with VirFinder.
+    3. Programmatically BLAST to see what the top hits are.
+    4. Return a graphic, a file of p-values, and a file of top hits in the output directory (date-stamped).
