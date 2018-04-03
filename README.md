@@ -16,10 +16,16 @@ VirFinder
  GitHub: https://github.com/jessieren/VirFinder
  NCBI: https://www.ncbi.nlm.nih.gov/pubmed/28683828
  
+ 
  Workflow
  -------
  <img src="./images/LongReadVirusesWorkflowII.png" width="900">
 
+
+1 Inputs
+-------
+All data passed into used in LongReadViruses should be long read PacBio shotgun metadata. 
+Three inputs are required
 
 Install
 -------
@@ -58,3 +64,7 @@ This should:
     2. Run the fasta data with VirFinder.
     3. Programmatically BLAST to see what the top hits are.
     4. Return a graphic, a file of p-values, and a file of top hits in the output directory (date-stamped).
+Citations
+---------
+VirFinder:
+Blast:
