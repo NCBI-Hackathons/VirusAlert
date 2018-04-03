@@ -1,7 +1,7 @@
 LongReadViruses
 ===============
 
-<img src="./images/virus-button.svg" width="300">
+<img src="./images/virus-button.png" width="300">
 
 Discovery and validation of viruses using long read technology
 
