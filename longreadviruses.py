@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 from docopt import docopt
 
@@ -14,7 +14,7 @@ def parse(args):
 def main():
   with open('usage.txt', 'r') as f:
     args = docopt(f.read(), version='longreadviruses 0.1')
-  print parse(args)
+  print(parse(args))
 
 if __name__ == '__main__':
   main()
