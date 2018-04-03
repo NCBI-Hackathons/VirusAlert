@@ -21,3 +21,6 @@ echo "installing virfinder..."
 sudo apt-get -y install r-base
 mkdir -p "${TOOLS_DIR}/R"
 Rscript "${SCRIPT_DIR}/install.R"
+
+# install analysis repdencies
+sudo apt-get install -y python3-biopython sra-toolkit
