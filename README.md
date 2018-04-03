@@ -1,11 +1,15 @@
 LongReadViruses
 ===============
 
-Goal: To find viruses, both novel and known, in PacBio generated long read metagenomic data in order to 
+Goal: To find viruses, both novel and known, in PacBio generated long read metagenomic data in order to find and diagnose viral infections in cultured cells using machine learning. 
 
 Discovery and validation of viruses using VirFinder and RPS BLAST technology trainded with PacBio long read metagenomic data for PacBio long read metagenomic data. 
 
 https://docs.google.com/presentation/d/125WTRdU_TjUtEwrDlG9p-orZDJxauGQl7ojDjvmwlMI/edit?usp=sharing
+
+VirFinder
+---------
+ a novel k-mer based tool for identifying viral sequences from assembled metagenomic data
 
 Install
 -------
