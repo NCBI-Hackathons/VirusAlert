@@ -1,14 +1,16 @@
 #!/bin/bash
 
 SCRIPT_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
-DATA_DIR="$(realpath "$SCRIPT_DIR/../data")"
-TOOLS_DIR="$(realpath "$SCRIPT_DIR/../tools")"
-R_USER_LIBS="$TOOLS_DIR/R"
+DATA_DIR="$SCRIPT_DIR/../data"
+TOOLS_DIR="$SCRIPT_DIR/../tools"
 VF_DIR="$TOOLS_DIR/VirFinder"
+echo "TOOLS_DIR: $TOOLS_DIR"
+echo "DATA_DIR: $DATA_DIR"
+export R_USER_LIBS="${TOOLS_DIR}/R"
 export PATH=$TOOLS_DIR:$PATH
 
 echo "installing debian dependencies..."
-sudo apt-get install python3-biopython sra-toolkit r-base python3-docopt
+sudo apt-get install python3-biopython sra-toolkit r-base python3-docopt libxml2 libxml2-dev libcurl4-openssl-dev libssl-dev
 
 echo "installing R dependencies to ${TOOLS_DIR}/R..."
 mkdir -p "$R_USER_LIBS"

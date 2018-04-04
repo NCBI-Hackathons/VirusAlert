@@ -53,7 +53,8 @@ def magicblast(v, args):
     check_call(cmd)
 
 def virfinder(args):
-    cmd = ["runVirFinder.R", args['input'], args['pvalue']]
+    vf = "R/runVirFinder.R"
+    cmd = [vf, args['input'], args['cutoff']]
     check_call(cmd)
 
 # def virlib(args):
@@ -63,7 +64,7 @@ def main():
         args = parse(docopt(f.read(), version='virusalert 1.0'))
     v = VirLib(verbose=True)
     # print(args)
-    # virfinder(args)
+    virfinder(args)
     magicblast(v, args)
     # virlib(args)
     # for i in args['input']:
