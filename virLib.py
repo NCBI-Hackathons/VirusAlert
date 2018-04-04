@@ -1,6 +1,6 @@
 import os
 import subprocess
-import logging
+import requests
 
 # BioPython
 from Bio.Blast import NCBIWWW # NCBI API wrapper
@@ -73,11 +73,65 @@ class VirLib(object):
         # save the output as an xml file
         with open(output_xml_path, "w") as out_handle:
             out_handle.write(result_handle.read())
+        # self.fetch_XML_results(result_handle)
 
-        blast_records = NCBIXML.parse(result_handle)
-        for blast_record in blast_records:
-            print(blast_record)
+    def fetch_XML_results(self, output_xml_path):
+        """
+        Looks for the words 'virus or 'viral' in the xml headers and returns those that match.
 
+        :param output_xml_path:
+        :return:
+        """
+        matches = []
+        accessions = []
+        with open(output_xml_path, "r") as out_handle:
+            blast_records = NCBIXML.parse(out_handle)
+            for blast_record in blast_records:
+                for alignment in blast_record.alignments:
+                    for hsp in alignment.hsps:
+                        accessions.append(self.get_accession(alignment.title))
+                        # fetch the organism by the accession number instead
+                        # possibly write if we care about the e value (hsp.expect)
+                        if 'virus' in alignment.title or 'viral' in alignment.title:
+                            matches.append(alignment.title)
+        if matches:
+            return matches
+        else:
+            return self.check_accessions(accessions)
+
+    def get_accession(self, record):
+        """"
+        Given a SeqRecord, return the accession number as a string.
+
+        e.g. "gi|2765613|emb|Z78488.1|PTZ78488" -> "Z78488.1"
+        """
+        parts = record.id.split("|")
+        assert len(parts) == 5 and parts[0] == "gi"
+        return parts[3]
+
+    def check_accessions(self):
+        pass
+
+    def print_XML_results(self, output_xml_path):
+        """
+        Only for debugging/verifying output.
+
+        :param result_handle:
+        :return:
+        """
+        # read the xml
+        with open(output_xml_path, "r") as out_handle:
+            blast_records = NCBIXML.parse(out_handle)
+            for blast_record in blast_records:
+                for alignment in blast_record.alignments:
+                    for hsp in alignment.hsps:
+                        print('****Alignment****')
+                        print('sequence:', alignment.title)
+                        print('length:', alignment.length)
+                        print('e value:', hsp.expect)
+                        print(hsp.query[0:75] + '...')
+                        print(hsp.match[0:75] + '...')
+                        print(hsp.sbjct[0:75] + '...')
 
 # # TESTING inputs with SRR fetching
 # v = VirLib()
@@ -86,9 +140,17 @@ class VirLib(object):
 # rv2 = v.process_inputs(type='srr', input='SRR5150787')
 # print(rv2)
 
+# TESTING biopython BLAST API
+v = VirLib()
+rv2 = v.process_inputs(type='srr', input='SRR5383888')
+print(rv2)
+v.blast_API_search(rv2, output_xml_path= 'default.xml')
 
-# # TESTING biopython BLAST API
 # v = VirLib()
-# rv2 = v.process_inputs(type='srr', input='SRR5383888')
-# print(rv2)
-# v.blast_API_search(rv2, output_xml_path= 'default.xml')
+# x = ['SRR6172655', 'SRR6172653', 'SRR5383891', 'SRR5383888']
+# for i in x:
+#     v.process_inputs(type='srr', input=i)
+
+
+# https://www.ncbi.nlm.nih.gov/nuccore/
+response = requests.get('https://www.ncbi.nlm.nih.gov/nuccore/KY881787.1')
