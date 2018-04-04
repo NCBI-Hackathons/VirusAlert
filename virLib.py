@@ -113,6 +113,7 @@ class VirLib(object):
         print('BLASTing the fastq entry.')
         # process fasta as a biopython sequence record object
         result_handle = NCBIWWW.qblast("blastn", "nt", record.seq)
+        print('Writing the BLAST results.')
 
         # save the output as an xml file
         with open(output_xml_path, "w") as out_handle:
@@ -226,7 +227,7 @@ class VirLib(object):
                 entries.append(record)
         return entries
 
-    def run(self, type='srr', input='SRR6172653'):
+    def run(self, type='srr', input='SRR6172653', verbose=True):
         """
 
         :return:
