@@ -11,13 +11,19 @@ def parse(args):
         'intype'  : args['-t']
     }
 
-def main():
-    with open('usage.txt', 'r') as f:
-        args = docopt(f.read(), version='virusalert 1.0')
+def virfinder(args):
+    pass
 
+def virlib(args):
     v = VirLib()
     for i in args['input']:
         v.run(type=args['intype'], input=i)
+
+def main():
+    with open('usage.txt', 'r') as f:
+        args = docopt(f.read(), version='virusalert 1.0')
+    virfinder(args)
+    virlib(args)
 
 if __name__ == '__main__':
     main()
