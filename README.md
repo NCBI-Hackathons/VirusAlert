@@ -78,29 +78,6 @@ Sample Output
  
  [Tree of viruses image]?
 
-
-Rough Plan
-----------
-
-1. Install (if not present) any BLAST dependencies, R, then VirFinder, and any pip dependencies (docopt):
-
-        sh install.sh
-
-2. Run program with sample options:
-
-        python3 virusalert.py -i <input-SRR-code> <optional p-value> -o <output-results-directory-path>
-        
-3. Output
-
-
-
-
-This should:
-
-    1. Fetch the fasta data from the SRR code.
-    2. Run the fasta data with VirFinder.
-    3. Programmatically BLAST to see what the top hits are.
-    4. Return a graphic, a file of p-values, and a file of top hits in the output directory (date-stamped).
 Citations
 ---------
 VirFinder:
