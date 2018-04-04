@@ -23,11 +23,33 @@ from Bio import SeqIO # ingests fastas
 # SRR6172655
 # PacBio Soil Samples: https://www.ncbi.nlm.nih.gov/sra/SRX3283431[accn]
 
-
 class VirLib(object):
     def __init__(self):
-        self.SRA_tool_path = '/home/lifeisaboutfishtacos/Desktop/sratoolkit.2.9.0-ubuntu64/bin'
+        self.SRA_tool_path = self.installSRAtoolkit()
         self.fastq_dump_path = os.path.join(self.SRA_tool_path, 'fastq-dump')
+
+    def installSRAtoolkit(self):
+        """
+        Compiled and tested on Ubuntu.
+
+        :return:
+        """
+        tools_dir = os.path.join(os.getcwd(), 'tools')
+        SRA_tar_path = os.path.join(tools_dir, 'sratoolkit.current-centos_linux64.tar.gz')
+        SRA_tar_url = 'http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-centos_linux64.tar.gz'
+        SRA_tool_path = os.path.join(tools_dir, 'sratoolkit.current-centos_linux64')
+
+        # if there's no SRA_toolkit tar, fetch it from ftp
+        if not os.path.exists(SRA_tar_path):
+            ftp_fetch = ["wget", "-P", tools_dir, SRA_tar_url]
+            subprocess.check_call(ftp_fetch)
+        # extract the compressed SRA_toolkit if not already extracted
+        if not os.path.exists(SRA_tool_path):
+            decompress_SRA_tools = ['tar', '-xzf', 'sratoolkit.current-centos_linux64.tar.gz']
+            subprocess.check_call(decompress_SRA_tools)
+
+        assert os.path.exists(SRA_tool_path)
+        return SRA_tool_path
 
     def processInputs(self, type, input):
         """
@@ -50,7 +72,9 @@ class VirLib(object):
 
     def getSRR(self, SRR_code):
         """
-        Documentation: https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=toolkit_doc&f=fastq-dump
+        Takes an SRR code, downloads it as a fastq, and returns the path to that fastq file.
+
+        API Documentation: https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=toolkit_doc&f=fastq-dump
 
         :param SRR_code:
         :return: filepath of downloaded fasta
@@ -74,6 +98,13 @@ class VirLib(object):
         return os.path.join(SRR_filepath)
 
     def blastAPISearch(self, fasta_path, output_xml_path='default.xml'):
+        """
+        Takes a fasta/fastq, runs BLAST, saves the XML outputs, and returns the xml path..
+
+        :param fasta_path:
+        :param output_xml_path:
+        :return:
+        """
         # process fasta as a biopython sequence record object
         record = SeqIO.read(fasta_path, format="fastq")
         result_handle = NCBIWWW.qblast("blastn", "nt", record.seq)
@@ -81,7 +112,7 @@ class VirLib(object):
         # save the output as an xml file
         with open(output_xml_path, "w") as out_handle:
             out_handle.write(result_handle.read())
-        # self.fetch_XML_results(result_handle)
+        return output_xml_path
 
     def fetchXMLResults(self, output_xml_path):
         """
@@ -97,39 +128,54 @@ class VirLib(object):
             blast_records = NCBIXML.parse(out_handle)
             for blast_record in blast_records:
                 for alignment in blast_record.alignments:
-                    for hsp in alignment.hsps:
-                        accessions.append(self.parseAccession(alignment.title))
-                        # fetch the organism by the accession number instead
-                        # possibly write if we care about the e value (hsp.expect)
-                        if 'virus' in alignment.title or 'viral' in alignment.title:
-                            matches.append(alignment.title)
+                    accessions.append(self.parseAccession(alignment.title))
+                    # fetch the organism by the accession number instead
+                    # possibly write if we care about the e value (hsp.expect)
+                    if 'virus' in alignment.title or 'viral' in alignment.title:
+                        matches.append(alignment.title)
         if matches:
             return matches
         else:
-            return self.check_accessions(accessions)
+            return self.checkAccessions(accessions_list=accessions)
 
-    def parseAccession(self, record):
+    def parseAccession(self, alignment_title):
         """"
         Given a SeqRecord, return the accession number as a string.
 
+        Modified from biopython.org.
+
         e.g. "gi|2765613|emb|Z78488.1|PTZ78488" -> "Z78488.1"
         """
-        parts = record.id.split("|")
+        parts = alignment_title.split("|")
         assert len(parts) == 5 and parts[0] == "gi"
         return parts[3]
 
-    def fetchAccession(self, accessionCode):
+    def organismNamefromGenBankAccession(self, accessionCode):
+        """
+        Returns an organism's English name from a GenBank accession number.
+
+        :param accessionCode:
+        :return: String
+        """
+
+        # throttle requests so that we don't contact the server more than once every 10 seconds
+        # More Info: https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=DeveloperInfo
+        time.sleep(11)
+
         Entrez.email = 'lblauvel@ucsc.edu'
         records_handle = Entrez.efetch(db="nuccore", rettype="gb", id=accessionCode)
         for record in records_handle:
             record = record.strip()
             if record.startswith('ORGANISM'):
-                print(record)
+                return record # [len('ORGANISM'):].strip()
 
-    def check_accessions(self):
-        pass
+    def checkAccessions(self, accessions_list):
+        resulting_organisms = []
+        for accession in accessions_list:
+            resulting_organisms.append(self.organismNamefromGenBankAccession(accession))
+        return resulting_organisms
 
-    def print_XML_results(self, output_xml_path):
+    def printXMLresults(self, output_xml_path):
         """
         Only for debugging/verifying output.
 
@@ -168,9 +214,5 @@ class VirLib(object):
 # for i in x:
 #     v.process_inputs(type='srr', input=i)
 
-# # https://www.ncbi.nlm.nih.gov/nuccore/
-# response = requests.get('https://www.ncbi.nlm.nih.gov/nuccore/KY881787.1')
-# print(response.text)
-
 # v = VirLib()
-# v.fetchAccession('KY881787.1')
+# v.organismNamefromGenBankAccession('KY881787.1')
