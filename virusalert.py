@@ -13,8 +13,7 @@ def parse(args):
 
 def main():
     with open('usage.txt', 'r') as f:
-        args = docopt(f.read(), version='longreadviruses 0.1')
-    # print(parse(args))
+        args = docopt(f.read(), version='virusalert 1.0')
 
     v = VirLib()
     for i in args['input']:
