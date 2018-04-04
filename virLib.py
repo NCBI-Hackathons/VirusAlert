@@ -24,9 +24,10 @@ from Bio import SeqIO # ingests fastas
 # PacBio Soil Samples: https://www.ncbi.nlm.nih.gov/sra/SRX3283431[accn]
 
 class VirLib(object):
-    def __init__(self):
+    def __init__(self, verbose):
         self.SRA_tool_path = self.installSRAtoolkit()
         self.fastq_dump_path = os.path.join(self.SRA_tool_path, 'fastq-dump')
+        self.verbose = verbose
 
     def installSRAtoolkit(self):
         """
@@ -34,7 +35,7 @@ class VirLib(object):
 
         :return:
         """
-        print('Installing SRA Toolkit.')
+        if self.verbose: print('Installing SRA Toolkit.')
         tools_dir = os.getcwd()
         SRA_tar_path = os.path.join(tools_dir, 'sratoolkit.current-centos_linux64.tar.gz')
         SRA_tar_url = 'http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-centos_linux64.tar.gz'
@@ -83,13 +84,13 @@ class VirLib(object):
         :param SRR_code:
         :return: filepath of downloaded fasta
         """
-        print('Fetching the SRR.')
+        if self.verbose: print('Fetching the SRR.')
         # basic example cmd: "./fastq-dump -X 5 -Z SRR5150787"
         sratools_API_cmd = "{fastq_dump_path} -Z {SRR_code} > {SRR_code}.fastq" \
                            "".format(fastq_dump_path=self.fastq_dump_path,
                                      SRR_code=SRR_code)
         # run the command
-        print('Now running: {cmd}'.format(cmd=sratools_API_cmd))
+        if self.verbose: print('Now running: {cmd}'.format(cmd=sratools_API_cmd))
         process = subprocess.Popen(sratools_API_cmd, shell=True)
         process.communicate()
         # assert the output file was created and return
@@ -110,10 +111,10 @@ class VirLib(object):
         :param output_xml_path:
         :return:
         """
-        print('BLASTing the fastq entry.')
+        if self.verbose: print('BLASTing the fastq entry.')
         # process fasta as a biopython sequence record object
         result_handle = NCBIWWW.qblast("blastn", "nt", record.seq)
-        print('Writing the BLAST results.')
+        if self.verbose: print('Writing the BLAST results.')
 
         # save the output as an xml file
         with open(output_xml_path, "w") as out_handle:
@@ -128,7 +129,7 @@ class VirLib(object):
         :param output_xml_path:
         :return:
         """
-        print('Parsing and fetching the xml search results.')
+        if self.verbose: print('Parsing and fetching the xml search results.')
         matches = []
         accessions = []
         with open(output_xml_path, "r") as out_handle:
@@ -141,11 +142,11 @@ class VirLib(object):
                     if 'virus' in alignment.title or 'viral' in alignment.title:
                         matches.append(alignment.title)
         if matches:
-            print(matches[0])
+            if self.verbose: print(matches[0])
             return matches[0] # only return the first match
         else:
             accessionMatches = self.checkAccessions(accessions_list=accessions)
-            print(accessionMatches[0])
+            if self.verbose: print(accessionMatches[0])
             return accessionMatches[0] # only return the first match
 
     def parseAccession(self, alignment_title):
@@ -168,7 +169,7 @@ class VirLib(object):
         :param accessionCode:
         :return: String
         """
-        print('Fetching Organism from GenBank Accession.')
+        if self.verbose: print('Fetching Organism from GenBank Accession.')
 
         # throttle requests so that we don't contact the server more than once every 10 seconds
         # More Info: https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=DeveloperInfo
@@ -183,7 +184,7 @@ class VirLib(object):
                 return record # [len('ORGANISM'):].strip()
 
     def checkAccessions(self, accessions_list):
-        print('Checking Accessions.')
+        if self.verbose: print('Checking Accessions.')
         resulting_organisms = []
         for accession in accessions_list:
             species = self.organismNamefromGenBankAccession(accession)
@@ -220,20 +221,20 @@ class VirLib(object):
         :param fastq:
         :return:
         """
-        print('Fetching Entries from Fastq.')
+        if self.verbose: print('Fetching Entries from Fastq.')
         entries = []
         with open(fastq, "rU") as handle:
             for record in SeqIO.parse(handle, "fastq"):
                 entries.append(record)
         return entries
 
-    def run(self, type='srr', input='SRR6172653', verbose=True):
+    def run(self, type='srr', input='SRR6172653'):
         """
 
         :return:
         """
-        # only fetch the first 10 entries in the fastq
-        max_entries = 10
+        # only fetch the first few entries in the fastq
+        max_entries = 1
 
         # fetch a fastq local path
         fastq_path = self.processInput(type=type, input=input)
@@ -248,7 +249,7 @@ class VirLib(object):
 
         # generate the output results in a file
         with open('species_results.txt', 'w') as f:
-            print('Top hits by p-value in sample are: ')
+            print('\n\nTop {} hits by p-value in this sample are: '.format(str(max_entries)))
             for s in list_of_species:
                 f.write(s)
                 f.write('\n')
