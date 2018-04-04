@@ -18,7 +18,7 @@ def virfinder(args):
     check_call(cmd)
 
 def virlib(args):
-    v = VirLib()
+    v = VirLib(verbose=True)
     for i in args['input']:
         v.run(type=args['intype'], input=i)
 

@@ -29,6 +29,9 @@ done
 
 wget http://www.virusite.org/archive/2018.1/genomes.fasta.zip
 unzip genomes.fasta.zip
-makeblastdb -in genomes.fasta -input_type fasta -dbtype nucl -parse_seqids -out viralg -title "An integrated database for viral genomics"
+
+perl -ne 'if(!/^[\s\t]/){print $_}' genomes.fasta |awk -v RS=">" -v FS="\n" -v ORS="" ' { if ($2) print ">"$0 } ' >  genomes_clean.fasta
+
+makeblastdb -in genomes_clean.fasta -input_type fasta -dbtype nucl -parse_seqids -out viralg -title "An integrated database for viral genomics"
 
 popd
