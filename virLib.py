@@ -141,11 +141,11 @@ class VirLib(object):
                         matches.append(alignment.title)
         if matches:
             print(matches[0])
-            return matches
+            return [matches[0]] # only return the first match
         else:
             accessionMatches = self.checkAccessions(accessions_list=accessions)
             print(accessionMatches[0])
-            return accessionMatches
+            return [accessionMatches[0]] # only return the first match
 
     def parseAccession(self, alignment_title):
         """"
@@ -157,7 +157,7 @@ class VirLib(object):
         """
         parts = alignment_title.split("|")
         assert parts[0] == "gi"
-        print('Using accession: {}'.format(parts[3]))
+        # print('Using accession: {}'.format(parts[3]))
         return parts[3]
 
     def organismNamefromGenBankAccession(self, accessionCode):
@@ -187,7 +187,7 @@ class VirLib(object):
         for accession in accessions_list:
             species = self.organismNamefromGenBankAccession(accession)
             resulting_organisms.append(species)
-            break # only fetch the first one for now
+            break # only fetch the first one
         return resulting_organisms
 
     def printXMLresults(self, output_xml_path):
@@ -239,17 +239,12 @@ class VirLib(object):
 # print(rv2)
 # v.blast_API_search(rv2, output_xml_path= 'default.xml')
 
+# TESTING Batch Fetching
 # v = VirLib()
 # x = ['SRR6172655', 'SRR6172653', 'SRR5383891', 'SRR5383888']
 # for i in x:
 #     v.process_inputs(type='srr', input=i)
 
+# TESTING SPECIES FROM ACCESSION
 # v = VirLib()
 # v.organismNamefromGenBankAccession('KY881787.1')
-
-v = VirLib()
-fastq_path = v.processInput(type='srr', input='SRR6172653')
-entries = v.entriesFromFastq(fastq=fastq_path)
-for record in entries:
-    output_xml_path = v.blastAPISearch(record, output_xml_path='default.xml')
-    species_list = v.fetchXMLResults(output_xml_path)
