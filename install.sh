@@ -3,32 +3,31 @@
 SCRIPT_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
 DATA_DIR="$SCRIPT_DIR/../data"
 TOOLS_DIR="$SCRIPT_DIR/../tools"
+R_USER_LIBS="$TOOLS_DIR/R"
+VF_DIR="$TOOLS_DIR/VirFinder"
 export PATH=$TOOLS_DIR:$PATH
 
 echo "installing debian dependencies..."
 sudo apt-get install python3-biopython sra-toolkit r-base
 
-echo "installing R dependencies..."
-R -e """
+echo "installing R dependencies to ${TOOLS_DIR}/R..."
+mkdir -p "$R_USER_LIBS"
+echo """
 # see https://www.r-bloggers.com/permanently-setting-the-cran-repository/
 local({
-  r <- getOption("repos")
-  r["CRAN"] <- "http://cran.cnr.berkeley.edu/"
+  r <- getOption('repos')
+  r['CRAN'] <- 'http://cran.cnr.berkeley.edu/'
   options(repos = r)
 })
 
-toolsdir=Sys.getenv('TOOLS_DIR')
-libdir=file.path(toolsdir, 'R')
-srcdir=file.path(toolsdir, 'VirFinder')
+install.packages('glmnet', dependencies=TRUE, lib='$R_USER_LIBS')
+install.packages('Rcpp', dependencies=TRUE, lib='$R_USER_LIBS')
 
-install.packages("glmnet", dependencies=TRUE, lib=libdir)
-install.packages("Rcpp", dependencies=TRUE, lib=libdir)
+source('https://bioconductor.org/biocLite.R')
+biocLite('qvalue')
+""" | R --slave
 
-source("https://bioconductor.org/biocLite.R")
-biocLite("qvalue")
-"""
-
-echo "downloading virfinder..."
+echo "downloading VirFinder to ${TOOLS_DIR}/VirFinder..."
 pushd "$TOOLS_DIR"
 if [[ ! -d VirFinder ]]; then
   wget https://codeload.github.com/jessieren/VirFinder/zip/master
@@ -38,7 +37,7 @@ if [[ ! -d VirFinder ]]; then
 fi
 popd
 
-echo "installing virfinder..."
-sudo apt-get -y install r-base
-mkdir -p "${TOOLS_DIR}/R"
-R -e "install.packages(srcdir, repos=NULL, type='source', lib=libdir)"
+echo "installing VirFinder R package..."
+echo """
+install.packages('$VF_DIR', repos=NULL, type='source', lib='$R_USER_LIBS')
+""" | R --slave
