@@ -90,9 +90,10 @@ Rough Plan
 
 2. Run program with sample options:
 
-        python3 longreadviruses.py -i <input-SRR-code> -o <output-results-directory-path>
+        python3 longreadviruses.py -i <input-SRR-code> <optional p-value> -o <output-results-directory-path>
         
-3. 
+3. Output
+
 
 
 
