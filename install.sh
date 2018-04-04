@@ -44,3 +44,22 @@ echo "installing VirFinder R package..."
 echo """
 install.packages('$VF_DIR', repos=NULL, type='source', lib='$R_USER_LIBS')
 """ | R --slave
+
+# get viral refseq blast database
+mkdir -p "$DATA_DIR"
+pushd "$DATA_DIR"
+for url in \
+  'http://mirrors.vbi.vt.edu/mirrors/ftp.ncbi.nih.gov/blast/db/ref_viruses_rep_genomes.tar.gz'; do
+    name="$(basename "$url")"
+    [[ -f "$name" ]] || wget "$url"
+    tar xvzf "$name"
+done
+
+wget http://www.virusite.org/archive/2018.1/genomes.fasta.zip
+unzip genomes.fasta.zip
+
+perl -ne 'if(!/^[\s\t]/){print $_}' genomes.fasta |awk -v RS=">" -v FS="\n" -v ORS="" ' { if ($2) print ">"$0 } ' >  genomes_clean.fasta
+
+makeblastdb -in genomes_clean.fasta -input_type fasta -dbtype nucl -parse_seqids -out viralg -title "An integrated database for viral genomics"
+
+popd

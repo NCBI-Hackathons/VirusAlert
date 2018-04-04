@@ -13,11 +13,11 @@ def datapath(path):
 def toolpath(path):
     return join(dirname(realpath(__file__)), 'tools', path)
 
-def parse(args):
+def parse(v, args):
     contdb = args['-d']
     if not contdb:
         contdb = datapath('viralg')
-    return {
+    args = {
         'verbose' : args['-v'],
         'input'   : args['-i'],
         'cutoff'  : args['-c'],
@@ -25,50 +25,57 @@ def parse(args):
         'outdir'  : datapath(''),
         'intype'  : args['-t']
     }
+    args = getinput(v, args)
+    return args
 
 def getinput(v, args):
-    print(args)
     t = args['intype']
     if t == 'srr':
       i = v.processInput(type=t, input=args['input'])
-      return i
+      args['intype'] = 'fastq'
+      args['input'] = i
+      return args
     elif t == 'fastq':
       i = v.processInput(type=t, input=args['input'])
       SeqIO.convert(args['input'], "fastq", i, "fasta")
-      return i
+      args['intype'] = 'fasta'
+      args['input'] = i
+      return args
     elif t == 'fasta':
-        return(args['input'])
+        return args
     else:
         raise Exception('invalid intype: ' + t)
 
 def magicblast(v, args):
-    i = getinput(v, args)
     mb = toolpath('ncbi-magicblast-1.3.0/bin/magicblast')
     cmd = [mb, "-query",
             args['input'],
             "-db", args['contdb'],
             "-out", join(args['outdir'], "magicblast_hits.gz"),
-            "-gzo -outfmt tabular"]
+            "-infmt", args['intype'],
+            "-gzo", "-outfmt", "tabular"]
     print(cmd)
     check_call(cmd)
 
 def virfinder(args):
-    vf = "R/runVirFinder.R"
-    cmd = [vf, args['input'], args['cutoff']]
+    cmd = ["../runVirFinder.R",
+            '--vanilla',
+            args['input'],
+            args['cutoff']]
     check_call(cmd)
 
 # def virlib(args):
 
 def main():
-    with open('usage.txt', 'r') as f:
-        args = parse(docopt(f.read(), version='virusalert 1.0'))
     v = VirLib(verbose=True)
-    # print(args)
-    virfinder(args)
+    with open('usage.txt', 'r') as f:
+        args = parse(v, docopt(f.read(), version='virusalert 1.0'))
+    print(args)
     magicblast(v, args)
+    virfinder(args)
     # virlib(args)
     # for i in args['input']:
-    v.run(type=args['intype'], input=args['input'])
+    # v.run(type=args['intype'], input=args['input'])
 
 if __name__ == '__main__':
     main()
