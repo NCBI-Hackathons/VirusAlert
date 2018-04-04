@@ -49,7 +49,7 @@ Usage
 Run [virusalert.py][2]. 
 
 [1]: install.sh
-[2]: longreadviruses.py
+[2]: virusalert.py.py
 [3]: usage.txt
 
 
