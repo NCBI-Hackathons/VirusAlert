@@ -61,22 +61,25 @@ Run [virusalert.py][2].
 
 Command Line Options for virusalert.py:
 ```
-virusalert.py -X
--h|--help  Print this help text. ---
+virusalert
 
+Discovery and validation of viruses using long read technology
+
+Usage:
+  virusalert.py --help
+  virusalert.py [-v] [-i INPUT] [-t INTYPE] [-c CUTOFF] [-d CONTDB] [-o OUTDIR]
+
+Options:
+-h|--help  Print this help text.
 -v         Print debugging information. [default: true]
-
--i INPUTS  One or more SRR numbers or fastq/a file paths as input,
-           e.g. SRR5150787 or testfile.fq [default: SRR5150787]
-           
+-i INPUT   SRR number or fastq/a file path as input,
+           e.g. SRR5150787 or testfile.fq [default: test.fastq]
 -t INTYPE  Type of input provided - can be either srr, fasta or fastq
-           [default: srr]
-           
-          
--c CONTDB  Contamination database to use. Default is to download and
-           install the RefSeq viral database.
-           
--o OUTDIR  Working directory and where to save results [default: analysis]
+           [default: fastq]
+-c CUTOFF  Significance cutoff [default: 0.5]
+-d CONTDB  BLAST database of expected viral contamination.
+           Default is to download the viral RefSeq database.
+-o OUTDIR  Working directory and where to save results [default: data]
 ```
 
 Inputs
