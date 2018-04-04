@@ -76,10 +76,11 @@ Sample Output
 ------------
  <img src="./images/SampleGraph.png" width="900">
  
- [Tree of viruses image]?
 
 Citations
 ---------
 VirFinder:
+Ren J, Ahlgren NA, Lu YY, Fuhrman JA, Sun F. VirFinder: a novel k-mer based tool for identifying viral sequences from assembled metagenomic data. Microbiome. 2017;5:69.
+
 Blast:
 Viral RefSeq?:
