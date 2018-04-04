@@ -10,11 +10,9 @@ Discovery and validation of viruses using VirFinder and RPS BLAST technology tra
 
 https://docs.google.com/presentation/d/125WTRdU_TjUtEwrDlG9p-orZDJxauGQl7ojDjvmwlMI/edit?usp=sharing
 
-Use Cases
----------
-LongReadViruses is intended to be used to analyze cell cultures used pharma bioractors to periodically check for viral infection. 
 
-Bioractor Use
+
+Bioreactor Use
 -------------
 LongReadViruses is intended to be used to analyze cell cultures used pharma bioractors to periodically check for viral infection.
 By running clean cell cultures through LRV, users can set a baseline p-value for their specific cell line. Extreme deviations along with BLAST analysis of 'contaminent' contigs can indicate viral infection and need for further investigation.
@@ -32,7 +30,7 @@ VirFinder
  
  BLAST
  -----
- Viral contigs assembled using Viper. 
+ Viral contigs assembled using [Viper]. 
  
 
 Install
