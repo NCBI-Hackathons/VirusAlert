@@ -37,6 +37,10 @@ def virlib(args):
         v.run(type=args['intype'], input=i)
 
 def main():
+    # fetch SRR files
+    # i = v.processInput(type='srr', input='SRR5383888')
+    # print(i)
+    
     # SeqIO.convert("example.fastq", "fastq", "example.fasta", "fasta")
     with open('usage.txt', 'r') as f:
         args = docopt(f.read(), version='virusalert 1.0')
