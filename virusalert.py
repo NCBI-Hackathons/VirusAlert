@@ -8,7 +8,7 @@ def parse(args):
         'verbose' : args['-v'],
         'inputs'  : args['-i'],
         'outdir'  : args['-o'],
-        'intype'  : args['-t'],
+        'intype'  : args['-t']
     }
 
 def main():
