@@ -10,24 +10,35 @@ Discovery and validation of viruses using VirFinder and RPS BLAST technology tra
 
 https://docs.google.com/presentation/d/125WTRdU_TjUtEwrDlG9p-orZDJxauGQl7ojDjvmwlMI/edit?usp=sharing
 
+Use Cases
+---------
+LongReadViruses is intended to be used to analyze cell cultures used pharma bioractors to periodically check for viral infection. 
+
+Bioractor Use
+-------------
+LongReadViruses is intended to be used to analyze cell cultures used pharma bioractors to periodically check for viral infection.
+By running clean cell cultures through LRV, users can set a baseline p-value for their specific cell line. Extreme deviations along with BLAST analysis of 'contaminent' contigs can indicate viral infection and need for further investigation.
+
+ 
+ Workflow
+ -------
+ <img src="./images/LongReadVirusesWorkflowII.v.2.png" width="900">
+
 VirFinder
 ---------
  a novel k-mer based tool for identifying viral sequences from assembled metagenomic data
  GitHub: https://github.com/jessieren/VirFinder
  NCBI: https://www.ncbi.nlm.nih.gov/pubmed/28683828
  
+ BLAST
+ -----
+ Viral contigs assembled using Viper. 
  
- Workflow
- -------
- <img src="./images/LongReadVirusesWorkflowII.v.2.png" width="900">
-
-
-
 
 Install
 -------
 
-First, clone the repository:
+1) First, clone the repository:
 
     git clone https://github.com/NCBI-Hackathons/LongReadViruses.git
 
@@ -38,20 +49,36 @@ This will install dependencies in the tools directory, and test data files in th
 Usage
 -----
 
-Run [longreadviruses.py][2]. See [usage.txt][3] for command line options.
+Run [longreadviruses.py][2]. 
 
 [1]: install.sh
 [2]: longreadviruses.py
 [3]: usage.txt
 
+
+Command Line Options for longreadviruses.py:
+
+-h|--help  Print this help text.
+-v         Print debugging information. [default: true]
+-i INPUTS  One or more SRR numbers or fastq/a file paths as input,
+           e.g. SRR5150787 or testfile.fq [default: SRR5150787]
+-t INTYPE  Type of input provided - can be either srr, fasta or fastq
+           [default: srr]
+-c CONTDB  Contamination database to use. Default is to download and
+           install the RefSeq viral database.
+-o OUTDIR  Working directory and where to save results [default: analysis]
+
 Inputs
 ------
-All data passed into used in LongReadViruses should be long read PacBio shotgun metadata and passed in the form of a SRA Run Accession (SRR). 
+Sequence SRR: All data passed into used in LongReadViruses should be long read PacBio shotgun metadata and passed in the form of a SRA Run Accession (SRR).
 
+Threshold [Optional] : minimum P-value for a non contaminated output
 
 Sample Output
 ------------
  <img src="./images/SampleGraph.png" width="900">
+ 
+ [Tree of viruses image]?
 
 
 Rough Plan
@@ -64,6 +91,10 @@ Rough Plan
 2. Run program with sample options:
 
         python3 longreadviruses.py -i <input-SRR-code> -o <output-results-directory-path>
+        
+3. 
+
+
 
 This should:
 
