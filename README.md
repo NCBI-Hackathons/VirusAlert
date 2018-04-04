@@ -1,6 +1,6 @@
 <img src="./images/virus-button.png" width="300">
 
-# LongReadViruses
+# VirusAlert
 
 Discovery and validation of viruses using long read technology
 
@@ -14,7 +14,7 @@ https://docs.google.com/presentation/d/125WTRdU_TjUtEwrDlG9p-orZDJxauGQl7ojDjvmw
 
 Bioreactor Use
 -------------
-LongReadViruses is intended to be used to analyze cell cultures used pharma bioractors to periodically check for viral infection.
+VirusAlert is intended to be used to analyze cell cultures used pharma bioractors to periodically check for viral infection.
 By running clean cell cultures through LRV, users can set a baseline p-value for their specific cell line. Extreme deviations along with BLAST analysis of 'contaminent' contigs can indicate viral infection and need for further investigation.
 
  
@@ -28,9 +28,9 @@ VirFinder
  GitHub: https://github.com/jessieren/VirFinder
  NCBI: https://www.ncbi.nlm.nih.gov/pubmed/28683828
  
- BLAST
+ BLASTn
  -----
- Viral contigs assembled using [Viper]. 
+ Searches through NCBI database for matches to viral contigs. 
  
 
 Install
@@ -54,7 +54,7 @@ Run [longreadviruses.py][2].
 [3]: usage.txt
 
 
-Command Line Options for longreadviruses.py:
+Command Line Options for virusalert.py:
 
 -h|--help  Print this help text.
 -v         Print debugging information. [default: true]
@@ -68,7 +68,7 @@ Command Line Options for longreadviruses.py:
 
 Inputs
 ------
-Sequence SRR: All data passed into used in LongReadViruses should be long read PacBio shotgun metadata and passed in the form of a SRA Run Accession (SRR).
+Sequence SRR: All data passed into used in VirusAlert should be long read PacBio shotgun metadata and passed in the form of a SRA Run Accession (SRR).
 
 Threshold [Optional] : minimum P-value for a non contaminated output
 
@@ -88,7 +88,7 @@ Rough Plan
 
 2. Run program with sample options:
 
-        python3 longreadviruses.py -i <input-SRR-code> <optional p-value> -o <output-results-directory-path>
+        python3 virusalert.py -i <input-SRR-code> <optional p-value> -o <output-results-directory-path>
         
 3. Output
 
