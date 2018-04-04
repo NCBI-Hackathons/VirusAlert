@@ -2,6 +2,7 @@
 
 from docopt import docopt
 from virLib import VirLib
+import os
 
 def parse(args):
     return {
@@ -13,6 +14,16 @@ def parse(args):
         'intype'  : args['-t']
     }
 
+def magicblast(args):
+    cmd = ["magicblast", "-query",
+           args['input'], 
+           "-db", args['contdb'],
+           "-out", os.path.join(args['outdir'], "user_magicB.gz"),
+           "-gzo -outfmt tabular"]
+    
+   check_call(cmd)
+
+           
 def virfinder(args):
     cmd = ["runVirFinder.R", args['input'], args['pvalue']]
     check_call(cmd)
