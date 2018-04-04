@@ -85,7 +85,7 @@ Sequence SRR: All data passed into used in VirusAlert should be long read PacBio
 
 Threshold [Optional] : minimum P-value for a non contaminated output
 
-Sample Output
+Summary Output
 ------------
  <img src="./images/SampleGraph.png" width="900">
  
