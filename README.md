@@ -68,7 +68,7 @@ Command Line Options for virusalert.py:
 
 Inputs
 ------
-Sequence SRR: All data passed into used in VirusAlert should be long read PacBio shotgun metadata and passed in the form of a SRA Run Accession (SRR).
+Sequence SRR: All data passed into used in VirusAlert should be long read PacBio shotgun sequences and passed in the form of a SRA Run Accession (SRR).
 
 Threshold [Optional] : minimum P-value for a non contaminated output
 
