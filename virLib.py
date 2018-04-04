@@ -1,8 +1,11 @@
 import os
+import sys
 import subprocess
+import time
 import requests
 
 # BioPython
+from Bio import Entrez
 from Bio.Blast import NCBIWWW # NCBI API wrapper
 from Bio.Blast import NCBIXML # parse output BLAST XML
 from Bio import SeqIO # ingests fastas
@@ -26,7 +29,7 @@ class VirLib(object):
         self.SRA_tool_path = '/home/lifeisaboutfishtacos/Desktop/sratoolkit.2.9.0-ubuntu64/bin'
         self.fastq_dump_path = os.path.join(self.SRA_tool_path, 'fastq-dump')
 
-    def process_inputs(self, type, input):
+    def processInputs(self, type, input):
         """
         Returns the filepath to a local fasta file.
 
@@ -43,9 +46,9 @@ class VirLib(object):
                     input.endswith('.fq'))
             return os.path.abspath(input)
         if type == 'srr':
-            return self.get_srr_file(SRR_code=input)
+            return self.getSRR(SRR_code=input)
 
-    def get_srr_file(self, SRR_code):
+    def getSRR(self, SRR_code):
         """
         Documentation: https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=toolkit_doc&f=fastq-dump
 
@@ -63,9 +66,14 @@ class VirLib(object):
         # assert the output file was created and return
         SRR_filepath = os.path.join(os.getcwd(), SRR_code + '.fastq')
         assert os.path.exists(SRR_filepath)
+
+        # throttle requests so that we don't contact the server more than once every 10 seconds
+        # More Info: https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=DeveloperInfo
+        time.sleep(11)
+
         return os.path.join(SRR_filepath)
 
-    def blast_API_search(self, fasta_path, output_xml_path= 'default.xml'):
+    def blastAPISearch(self, fasta_path, output_xml_path='default.xml'):
         # process fasta as a biopython sequence record object
         record = SeqIO.read(fasta_path, format="fastq")
         result_handle = NCBIWWW.qblast("blastn", "nt", record.seq)
@@ -75,9 +83,10 @@ class VirLib(object):
             out_handle.write(result_handle.read())
         # self.fetch_XML_results(result_handle)
 
-    def fetch_XML_results(self, output_xml_path):
+    def fetchXMLResults(self, output_xml_path):
         """
-        Looks for the words 'virus or 'viral' in the xml headers and returns those that match.
+        Looks for the words 'virus or 'viral' in the xml headers and returns those that match.  If
+        none match, (slowly) fetch the GenBank accession files and determine the organism.
 
         :param output_xml_path:
         :return:
@@ -89,7 +98,7 @@ class VirLib(object):
             for blast_record in blast_records:
                 for alignment in blast_record.alignments:
                     for hsp in alignment.hsps:
-                        accessions.append(self.get_accession(alignment.title))
+                        accessions.append(self.parseAccession(alignment.title))
                         # fetch the organism by the accession number instead
                         # possibly write if we care about the e value (hsp.expect)
                         if 'virus' in alignment.title or 'viral' in alignment.title:
@@ -99,7 +108,7 @@ class VirLib(object):
         else:
             return self.check_accessions(accessions)
 
-    def get_accession(self, record):
+    def parseAccession(self, record):
         """"
         Given a SeqRecord, return the accession number as a string.
 
@@ -108,6 +117,14 @@ class VirLib(object):
         parts = record.id.split("|")
         assert len(parts) == 5 and parts[0] == "gi"
         return parts[3]
+
+    def fetchAccession(self, accessionCode):
+        Entrez.email = 'lblauvel@ucsc.edu'
+        records_handle = Entrez.efetch(db="nuccore", rettype="gb", id=accessionCode)
+        for record in records_handle:
+            record = record.strip()
+            if record.startswith('ORGANISM'):
+                print(record)
 
     def check_accessions(self):
         pass
@@ -140,17 +157,20 @@ class VirLib(object):
 # rv2 = v.process_inputs(type='srr', input='SRR5150787')
 # print(rv2)
 
-# TESTING biopython BLAST API
-v = VirLib()
-rv2 = v.process_inputs(type='srr', input='SRR5383888')
-print(rv2)
-v.blast_API_search(rv2, output_xml_path= 'default.xml')
+# # TESTING biopython BLAST API
+# v = VirLib()
+# rv2 = v.process_inputs(type='srr', input='SRR5383888')
+# print(rv2)
+# v.blast_API_search(rv2, output_xml_path= 'default.xml')
 
 # v = VirLib()
 # x = ['SRR6172655', 'SRR6172653', 'SRR5383891', 'SRR5383888']
 # for i in x:
 #     v.process_inputs(type='srr', input=i)
 
+# # https://www.ncbi.nlm.nih.gov/nuccore/
+# response = requests.get('https://www.ncbi.nlm.nih.gov/nuccore/KY881787.1')
+# print(response.text)
 
-# https://www.ncbi.nlm.nih.gov/nuccore/
-response = requests.get('https://www.ncbi.nlm.nih.gov/nuccore/KY881787.1')
+# v = VirLib()
+# v.fetchAccession('KY881787.1')
