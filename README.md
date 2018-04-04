@@ -92,8 +92,6 @@ Inputs
 ------
 Sequence SRR: All data passed into used in VirusAlert should be long read PacBio shotgun sequences and passed in the form of a SRA Run Accession (SRR).
 
-Threshold [Optional] : minimum P-value for a non contaminated output
-
 Summary Output
 ------------
  <img src="./images/SampleGraph.png" width="900">
