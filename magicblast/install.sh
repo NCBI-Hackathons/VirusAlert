@@ -26,4 +26,9 @@ for url in \
     [[ -f "$name" ]] || wget "$url"
     tar xvzf "$name"
 done
+
+wget http://www.virusite.org/archive/2018.1/genomes.fasta.zip
+unzip genomes.fasta.zip
+makeblastdb -in genomes.fasta -input_type fasta -dbtype nucl -parse_seqids -out viralg -title "An integrated database for viral genomics"
+
 popd
