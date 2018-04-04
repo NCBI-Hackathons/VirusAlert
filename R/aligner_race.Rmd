@@ -1,0 +1,171 @@
+---
+title: "General assessment of alignment tools on metagenomic PacBio dataset" 
+author: "Thomas C Ng"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_notebook:
+    toc: true
+---
+
+Here's a list of alignment software that will be used to test metagenomic (soil) data against known viral database (specifically, the db is http://www.virusite.org/index.php?nav=download)
+
+ * magicBlast (check)
+ * blat (check)
+ * Hi-SAT2 (low sensitivity; skipped)
+ * minimap (check)
+ * Mashmap (failure in setup)
+ * Mash
+ 
+For the sake of time, we are going to choose default parameters for all of the programs. 
+
+#### MagicBlast
+
+##### About
+MagicBlast is a blast-based short read aligner that is sensitive to detect gaps, edge cases and intronic segment. It takes composite score between pairs of alignment pieces, as opposed to treat each piece independently.
+
+Adv: can take sra #
+
+
+##### Installation guide
+link: https://ncbi.github.io/magicblast/doc/download.html
+
+##### Usage
+
+genomes.fasta: it is downloaded from http://www.virusite.org/index.php?nav=download
+
+First I need to create a blast database:
+`makeblastdb -in genomes.fasta -input_type fasta -dbtype nucl -parse_seqids -out viralg -title "Anintegrated database for viral genomics"`
+
+I get error notification about this fasta format. "BLAST Database creation error: FASTA-Reader: No residues given"
+What I found is that there are header entries that looks like this:
+"""
+1621844 >refseq|NC_013402|1162nt|Epizootic hemorrhagic disease virus (serotype 1 / strain New
+1621845             Jersey), segment 7
+"""
+
+Additionally, there are fasta entries with header without any sequence files. 
+
+Need to clean up the fasta file: 
+`perl -ne 'if(!/^[\s\t]/){print $_}' genomes.fasta |awk -v RS=">" -v FS="\n" -v ORS="" ' { if ($2) print ">"$0 } ' >  genomes_clean.fasta`
+
+`makeblastdb -in genomes_clean.fasta -input_type fasta -dbtype nucl -parse_seqids -out viralg -title "Anintegrated database for viral genomics"
+
+magicblast -query ../sra/SRR5383888.fa -db viralg -out HBV1_magicB.gz -gzo
+magicblast -query ../sra/SRR5383891.fa -db viralg -out HBV2_magicB.gz -gzo
+magicblast -query ../sra/SRR6172653.fa -db viralg -out Soil1_magicB.gz -gzo
+
+`
+
+
+#### Blat
+
+##### About
+A much faster quick exact alignment approach than blast
+
+##### Installation guide
+all the latest blat software can be found in https://users.soe.ucsc.edu/~kent/src/
+
+```{bash, eval =F}
+wget https://users.soe.ucsc.edu/~kent/src/blatSrc.zip
+mkdir blat
+export MACHTYPE
+MACHTYPE=I386
+mkdir ~/bin
+mkdir ~/bin/$MACHTYPE
+make
+# remember to update bashrc $PATH
+```
+
+##### Usage 
+
+usage:
+   blat database query [-ooc=11.ooc] output.psl
+where:
+   database and query are each either a .fa , .nib or .2bit file
+   
+```{bash, eval=F}
+blat ~/data/db/genomes_clean.fasta ~/data/sra/SRR5383888.fa HBV1_blat.psl
+blat ~/data/db/genomes_clean.fasta ~/data/sra/SRR5383891.fa HBV2_blat.psl
+blat ~/data/db/genomes_clean.fasta ~/data/sra/SRR6172653.fa Soil1_blat.psl
+```
+
+blat doesn't take long to run but a bit more stringent in matches!!! Superb!
+
+
+#### Hi-SAT2
+A quick alignment based on hierarchical FM index approach
+
+##### About
+well used 
+
+##### Installation guide
+`wget ftp://ftp.ccb.jhu.edu/pub/infphilo/hisat2/downloads/hisat2-2.1.0-Linux_x86_64.zip`
+
+
+##### Usage
+
+First we need to build the index
+
+`ubuntu@ip-172-30-0-141:~/data/db$ hisat2-build genomes_clean.fasta genomesC`
+
+hisat2 ~/data/db/genomesC -f ~/data/sra/SRR5383888.fa > HBV1_hisat2.psl
+hisat2 ~/data/db/genomesC -f ~/data/sra/SRR5383891.fa > HBV2_hisat2.psl
+hisat2 ~/data/db/genomesC -f ~/data/sra/SRR6172653.fa > Soil1_hisat2.psl
+
+Unfortunately - no matches !!! Might dismissed this tool!
+
+
+#### minimap
+BWA recommends use of minimap2 for long read alignment
+##### Installation guide
+
+git clone https://github.com/lh3/minimap2
+cd minimap2 && make
+
+##### Usage
+
+```{bash, eval=F}
+first build index 
+minimap2 -d ref.mmi genomes_clean.fasta
+
+minimap2 -a ref.mmi ~/data/sra/SRR5383888.fa > HBV1_minimap.sam
+minimap2 -a ref.mmi ~/data/sra/SRR5383891.fa > HBV2_minimap.sam
+minimap2 -a ref.mmi ~/data/sra/SRR6172653.fa > Soil1_minimap.sam
+```
+
+Fantastic!!!
+
+
+#### Mashmap
+
+MashMap implements a fast and approximate algorithm for computing local alignment boundaries between long DNA sequences
+
+##### installation setup
+git clone https://github.com/marbl/MashMap.git
+
+have to install gsl in machine: http://www.gnu.org/software/gsl/
+./configure && sudo make && sudo make install
+
+./bootstrap.sh
+./configure 
+make
+
+getting error during setup. I have to cut this loose due to the interest of time.
+
+#### Mash
+##### installation setup:
+
+
+`wget https://github.com/marbl/Mash/releases/download/v2.0/mash-Linux64-v2.0.tar`
+
+
+mash sketch -m 2 genomes_clean.fasta
+mash sketch -m 2 ~/data/sra/SRR5383888.fa 
+mash dist refseq.genomes.k21.s1000.msh reads.fastq.msh > HBV1_mash.tab
+
+mash sketch -m 2 ~/data/sra/SRR5383891.fa
+mash sketch -m 2 ~/data/sra/SRR6172653.fa
+
+mash screen ~/data/sra/SRR6172653.fa.msh
+
+

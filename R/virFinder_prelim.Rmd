@@ -1,0 +1,82 @@
+---
+title: "VirFinder" 
+author: "Thomas C Ng"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_notebook:
+    toc: true
+---
+
+```{r, echo=F}
+library("tidyverse")
+library(VirFinder)
+
+```
+* HBV1: Human w/ HBV (PacBio): https://www.ncbi.nlm.nih.gov/sra/SRX2678953[accn]
+* HBV2: Human w/ HBV (PacBio; Control): https://www.ncbi.nlm.nih.gov/sra/SRX2678956[accn]
+Cited in other papers, should be good
+
+SRR5383888.fa
+SRR5383891 - control fasta
+
+* Soil1: PacBio Soil Samples: https://www.ncbi.nlm.nih.gov/sra/SRX3283433[accn]
+* Soil2: PacBio Soil Samples: https://www.ncbi.nlm.nih.gov/sra/SRX3283431[accn]
+
+```{bash, eval=F}
+fastq-dump --fasta SRR6172653
+fastq-dump --fasta SRR6172655 : empty
+
+(2018-04-03T18:14:34 fastq-dump.2.3.5 err: error unexpected while resolving tree within virtual file system module - failed to resolve accession 'SRR6172655' - Obsolete software. See https://github.com/ncbi/sra-tools/wiki ( 406 )
+
+Redirected!!!
+
+2018-04-03T18:14:34 fastq-dump.2.3.5 err: name incorrect while evaluating path within network system module - Scheme is 'https'
+2018-04-03T18:14:34 fastq-dump.2.3.5 err: item not found while constructing within virtual database module - the path 'SRR6172655' cannot be opened as database or table
+)
+```
+
+```{r, echo=F, eval=F}
+HBV1.file <- "SRR5383888.fa"
+pHBV1.redResult <- VF.pred(HBV1.file) 
+
+
+HBV2.file <- "SRR5383891.fa"
+pHBV2.redResult <- VF.pred(HBV2.file) 
+
+Soil1.file <- "SRR6172653.fa"
+Soil1.redResult <- VF.pred(Soil1.file) 
+
+saveRDS(rbind(pHBV1.redResult,pHBV2.redResult, Soil1.redResult),
+        file="prelim_result.rds")
+
+#eduroam-169-233-244-104:data thomasn$ scp -i tngthomasng@gmail.com ubuntu@54.152.196.134:/home/ubuntu/data/sra/*.rds .
+
+```
+
+```{r}
+
+virFind.result <- readRDS("data/prelim_result.rds") %>%
+  tbl_df()
+
+HBV.result <- head(virFind.result, 2) %>%
+  mutate(fname = row_number())
+
+HBV.result$fname[1] <- "HBV_sample"
+HBV.result$fname[2] <- "HBV_control"
+
+Soil.result <- virFind.result %>%
+  tail(.,-2)%>%
+  arrange(score) %>%
+  mutate(fname = row_number())
+
+ggplot(Soil.result, aes(x=fname, y=score))+
+  geom_point()+
+  geom_hline(yintercept = HBV.result$score[1], color="red")+
+  geom_hline(yintercept = HBV.result$score[2], color = "blue")+
+  geom_text(data=HBV.result, aes(x=900,y=score-0.05, label=fname))+
+  theme_bw()+
+  xlab("Soil PacBio sample")
+
+
+  geom_point(data=HBV.result, aes(x=fname, y=score))
+```
