@@ -226,7 +226,6 @@ class VirLib(object):
                 entries.append(record)
         return entries
 
-
 # # TESTING inputs with SRR fetching
 # v = VirLib()
 # rv1 = v.process_input(type='fasta', input='input.fa')
