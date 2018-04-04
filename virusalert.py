@@ -2,6 +2,7 @@
 
 from docopt import docopt
 from virLib import VirLib
+from Bio import SeqIO
 import os
 
 def parse(args):
@@ -36,6 +37,7 @@ def virlib(args):
         v.run(type=args['intype'], input=i)
 
 def main():
+    # SeqIO.convert("example.fastq", "fastq", "example.fasta", "fasta")
     with open('usage.txt', 'r') as f:
         args = docopt(f.read(), version='virusalert 1.0')
     os.chdir(args['outdir'])
