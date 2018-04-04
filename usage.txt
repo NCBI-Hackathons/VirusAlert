@@ -1,10 +1,10 @@
-longreadviruses
+virusalert
 
 Discovery and validation of viruses using long read technology
 
 Usage:
-  longreadviruses.py --help
-  longreadviruses.py [-v] -i INPUT... [-t INTYPE] [-o OUTDIR]
+  virusalert.py --help
+  virusalert.py [-v] -i INPUT... [-t INTYPE] [-p PVALUE] [-o OUTDIR]
 
 Options:
 -h|--help  Print this help text.
@@ -13,4 +13,7 @@ Options:
            e.g. SRR5150787 or testfile.fq [default: SRR6172653]
 -t INTYPE  Type of input provided - can be either srr, fasta or fastq
            [default: srr]
+-c CUTOFF  Significance cutoff [default: 0.5]
+-d CONTDB  BLAST database of expected viral contamination.
+           Default is to download the viral RefSeq database.
 -o OUTDIR  Working directory and where to save results [default: analysis]
