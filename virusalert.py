@@ -9,7 +9,6 @@ def parse(args):
         'inputs'  : args['-i'],
         'outdir'  : args['-o'],
         'intype'  : args['-t'],
-        'contdb'  : args['-c']
     }
 
 def main():
