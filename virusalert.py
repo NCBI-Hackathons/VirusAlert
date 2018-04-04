@@ -7,12 +7,14 @@ def parse(args):
     return {
         'verbose' : args['-v'],
         'input'   : args['-i'],
+        'cutoff'  : args['-c'],
         'outdir'  : args['-o'],
         'intype'  : args['-t']
     }
 
 def virfinder(args):
-    pass
+    cmd = ["runVirFinder.R", args['input'], args['pvalue']]
+    check_call(cmd)
 
 def virlib(args):
     v = VirLib()
