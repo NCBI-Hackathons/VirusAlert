@@ -141,11 +141,11 @@ class VirLib(object):
                         matches.append(alignment.title)
         if matches:
             print(matches[0])
-            return [matches[0]] # only return the first match
+            return matches[0] # only return the first match
         else:
             accessionMatches = self.checkAccessions(accessions_list=accessions)
             print(accessionMatches[0])
-            return [accessionMatches[0]] # only return the first match
+            return accessionMatches[0] # only return the first match
 
     def parseAccession(self, alignment_title):
         """"
