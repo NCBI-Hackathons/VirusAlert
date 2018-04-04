@@ -18,7 +18,7 @@ def main():
 
     v = VirLib()
     # requires srr code or fastq
-    v.run(type='srr', input='SRR6172653')
+    v.run(type='srr', input='SRR6172653', verbose=True)
 
 if __name__ == '__main__':
     main()
