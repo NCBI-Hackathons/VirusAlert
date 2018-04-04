@@ -12,16 +12,15 @@ def parse(args):
     }
 
 def main():
-    # with open('usage.txt', 'r') as f:
-    #     args = docopt(f.read(), version='longreadviruses 0.1')
-    # print(parse(args))
+    with open('usage.txt', 'r') as f:
+        args = docopt(f.read(), version='virusalert 1.0')
 
     # only fetch the first 10 entries in the fastq
     max_entries = 10
 
     v = VirLib()
     # fetch a fastq local path
-    fastq_path = v.processInput(type='srr', input='SRR6172653')
+    fastq_path = v.processInput(type=args['intype'], input='SRR6172653')
     # return a list of BioPython objects representing each fastq entry in the file
     entries = v.entriesFromFastq(fastq=fastq_path)
     # BLAST, generate an XML, and parse to obtain the first species hit
