@@ -226,6 +226,33 @@ class VirLib(object):
                 entries.append(record)
         return entries
 
+    def run(self, type='srr', input='SRR6172653'):
+        """
+
+        :return:
+        """
+        # only fetch the first 10 entries in the fastq
+        max_entries = 10
+
+        # fetch a fastq local path
+        fastq_path = self.processInput(type=type, input=input)
+        # return a list of BioPython objects representing each fastq entry in the file
+        entries = self.entriesFromFastq(fastq=fastq_path)
+        # BLAST, generate an XML, and parse to obtain the first species hit
+        list_of_species = []
+        for record in entries[:max_entries]:
+            output_xml_path = self.blastAPISearch(record, output_xml_path='default.xml')
+            species = self.fetchXMLResults(output_xml_path)
+            list_of_species.append(species)
+
+        # generate the output results in a file
+        with open('species_results.txt', 'w') as f:
+            print('Top hits by p-value in sample are: ')
+            for s in list_of_species:
+                f.write(s)
+                f.write('\n')
+                print(s)
+
 # # TESTING inputs with SRR fetching
 # v = VirLib()
 # rv1 = v.process_input(type='fasta', input='input.fa')
