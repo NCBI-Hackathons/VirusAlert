@@ -34,6 +34,7 @@ class VirLib(object):
 
         :return:
         """
+        print('Installing SRA Toolkit.')
         tools_dir = os.getcwd()
         SRA_tar_path = os.path.join(tools_dir, 'sratoolkit.current-centos_linux64.tar.gz')
         SRA_tar_url = 'http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-centos_linux64.tar.gz'
@@ -63,6 +64,7 @@ class VirLib(object):
         :param input:
         :return:
         """
+        print('Processing Inputs.')
         if type == 'fasta':
             assert (input.endswith('.fasta') or
                     input.endswith('.fa') or
@@ -81,6 +83,7 @@ class VirLib(object):
         :param SRR_code:
         :return: filepath of downloaded fasta
         """
+        print('Fetching the SRR.')
         # basic example cmd: "./fastq-dump -X 5 -Z SRR5150787"
         sratools_API_cmd = "{fastq_dump_path} -Z {SRR_code} > {SRR_code}.fastq" \
                            "".format(fastq_dump_path=self.fastq_dump_path,
@@ -107,6 +110,7 @@ class VirLib(object):
         :param output_xml_path:
         :return:
         """
+        print('BLASTing the fastq entry.')
         # process fasta as a biopython sequence record object
         result_handle = NCBIWWW.qblast("blastn", "nt", record.seq)
 
@@ -123,6 +127,7 @@ class VirLib(object):
         :param output_xml_path:
         :return:
         """
+        print('Parsing and fetching the xml search results.')
         matches = []
         accessions = []
         with open(output_xml_path, "r") as out_handle:
@@ -135,9 +140,12 @@ class VirLib(object):
                     if 'virus' in alignment.title or 'viral' in alignment.title:
                         matches.append(alignment.title)
         if matches:
+            print(matches[0])
             return matches
         else:
-            return self.checkAccessions(accessions_list=accessions)
+            accessionMatches = self.checkAccessions(accessions_list=accessions)
+            print(accessionMatches[0])
+            return accessionMatches
 
     def parseAccession(self, alignment_title):
         """"
@@ -148,8 +156,8 @@ class VirLib(object):
         e.g. "gi|2765613|emb|Z78488.1|PTZ78488" -> "Z78488.1"
         """
         parts = alignment_title.split("|")
-        print(parts)
         assert parts[0] == "gi"
+        print('Using accession: {}'.format(parts[3]))
         return parts[3]
 
     def organismNamefromGenBankAccession(self, accessionCode):
@@ -159,6 +167,7 @@ class VirLib(object):
         :param accessionCode:
         :return: String
         """
+        print('Fetching Organism from GenBank Accession.')
 
         # throttle requests so that we don't contact the server more than once every 10 seconds
         # More Info: https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=DeveloperInfo
@@ -169,12 +178,16 @@ class VirLib(object):
         for record in records_handle:
             record = record.strip()
             if record.startswith('ORGANISM'):
+                print(record)
                 return record # [len('ORGANISM'):].strip()
 
     def checkAccessions(self, accessions_list):
+        print('Checking Accessions.')
         resulting_organisms = []
         for accession in accessions_list:
-            resulting_organisms.append(self.organismNamefromGenBankAccession(accession))
+            species = self.organismNamefromGenBankAccession(accession)
+            resulting_organisms.append(species)
+            break # only fetch the first one for now
         return resulting_organisms
 
     def printXMLresults(self, output_xml_path):
@@ -206,7 +219,7 @@ class VirLib(object):
         :param fastq:
         :return:
         """
-        from Bio import SeqIO
+        print('Fetching Entries from Fastq.')
         entries = []
         with open(fastq, "rU") as handle:
             for record in SeqIO.parse(handle, "fastq"):
@@ -236,10 +249,8 @@ class VirLib(object):
 # v.organismNamefromGenBankAccession('KY881787.1')
 
 v = VirLib()
-fastq_path = v.processInput(type='srr', input='SRR5383888')
+fastq_path = v.processInput(type='srr', input='SRR6172653')
 entries = v.entriesFromFastq(fastq=fastq_path)
 for record in entries:
     output_xml_path = v.blastAPISearch(record, output_xml_path='default.xml')
     species_list = v.fetchXMLResults(output_xml_path)
-    for i in species_list:
-        print(i)
