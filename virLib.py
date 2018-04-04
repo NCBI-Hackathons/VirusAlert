@@ -34,10 +34,12 @@ class VirLib(object):
 
         :return:
         """
-        tools_dir = os.path.join(os.getcwd(), 'tools')
+        tools_dir = os.getcwd()
         SRA_tar_path = os.path.join(tools_dir, 'sratoolkit.current-centos_linux64.tar.gz')
         SRA_tar_url = 'http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-centos_linux64.tar.gz'
-        SRA_tool_path = os.path.join(tools_dir, 'sratoolkit.current-centos_linux64')
+        # decompresses into version 2.9.0 for some reason
+        SRA_tool_path = os.path.join(tools_dir, 'sratoolkit.2.9.0-centos_linux64/bin')
+        # /home/lifeisaboutfishtacos/Desktop/virusRepo/LongReadViruses/sratoolkit.2.9.0-centos_linux64/bin
 
         # if there's no SRA_toolkit tar, fetch it from ftp
         if not os.path.exists(SRA_tar_path):
@@ -45,13 +47,13 @@ class VirLib(object):
             subprocess.check_call(ftp_fetch)
         # extract the compressed SRA_toolkit if not already extracted
         if not os.path.exists(SRA_tool_path):
-            decompress_SRA_tools = ['tar', '-xzf', 'sratoolkit.current-centos_linux64.tar.gz']
+            decompress_SRA_tools = ['tar', '-xzf', SRA_tar_path]
             subprocess.check_call(decompress_SRA_tools)
 
         assert os.path.exists(SRA_tool_path)
         return SRA_tool_path
 
-    def processInputs(self, type, input):
+    def processInput(self, type, input):
         """
         Returns the filepath to a local fasta file.
 
@@ -97,22 +99,21 @@ class VirLib(object):
 
         return os.path.join(SRR_filepath)
 
-    def blastAPISearch(self, fasta_path, output_xml_path='default.xml'):
+    def blastAPISearch(self, record, output_xml_path='default.xml'):
         """
         Takes a fasta/fastq, runs BLAST, saves the XML outputs, and returns the xml path..
 
-        :param fasta_path:
+        :param fastq_path:
         :param output_xml_path:
         :return:
         """
         # process fasta as a biopython sequence record object
-        record = SeqIO.read(fasta_path, format="fastq")
         result_handle = NCBIWWW.qblast("blastn", "nt", record.seq)
 
         # save the output as an xml file
         with open(output_xml_path, "w") as out_handle:
             out_handle.write(result_handle.read())
-        return output_xml_path
+        return os.path.abspath(output_xml_path)
 
     def fetchXMLResults(self, output_xml_path):
         """
@@ -147,7 +148,8 @@ class VirLib(object):
         e.g. "gi|2765613|emb|Z78488.1|PTZ78488" -> "Z78488.1"
         """
         parts = alignment_title.split("|")
-        assert len(parts) == 5 and parts[0] == "gi"
+        print(parts)
+        assert parts[0] == "gi"
         return parts[3]
 
     def organismNamefromGenBankAccession(self, accessionCode):
@@ -196,11 +198,27 @@ class VirLib(object):
                         print(hsp.match[0:75] + '...')
                         print(hsp.sbjct[0:75] + '...')
 
+    def entriesFromFastq(self, fastq):
+        """
+        fastq files may have multiple entries.  This returns a list of BioPython record objects
+        associated with each fastq entry.
+
+        :param fastq:
+        :return:
+        """
+        from Bio import SeqIO
+        entries = []
+        with open(fastq, "rU") as handle:
+            for record in SeqIO.parse(handle, "fastq"):
+                entries.append(record)
+        return entries
+
+
 # # TESTING inputs with SRR fetching
 # v = VirLib()
-# rv1 = v.process_inputs(type='fasta', input='input.fa')
+# rv1 = v.process_input(type='fasta', input='input.fa')
 # print(rv1)
-# rv2 = v.process_inputs(type='srr', input='SRR5150787')
+# rv2 = v.process_input(type='srr', input='SRR5150787')
 # print(rv2)
 
 # # TESTING biopython BLAST API
@@ -216,3 +234,12 @@ class VirLib(object):
 
 # v = VirLib()
 # v.organismNamefromGenBankAccession('KY881787.1')
+
+v = VirLib()
+fastq_path = v.processInput(type='srr', input='SRR5383888')
+entries = v.entriesFromFastq(fastq=fastq_path)
+for record in entries:
+    output_xml_path = v.blastAPISearch(record, output_xml_path='default.xml')
+    species_list = v.fetchXMLResults(output_xml_path)
+    for i in species_list:
+        print(i)
