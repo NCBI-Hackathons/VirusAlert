@@ -20,6 +20,7 @@ local({
   options(repos = r)
 })
 
+install.packages('tidyverse', dependencies=TRUE, lib='$R_USER_LIBS')
 install.packages('glmnet', dependencies=TRUE, lib='$R_USER_LIBS')
 install.packages('Rcpp', dependencies=TRUE, lib='$R_USER_LIBS')
 
