@@ -67,15 +67,11 @@ def virfinder(args):
 # def virlib(args):
 
 def main():
-    v = VirLib(verbose=True)
     with open('usage.txt', 'r') as f:
         args = parse(v, docopt(f.read(), version='virusalert 1.0'))
     print(args)
     magicblast(v, args)
     virfinder(args)
-    # virlib(args)
-    # for i in args['input']:
-    # v.run(type=args['intype'], input=args['input'])
 
 if __name__ == '__main__':
     main()
