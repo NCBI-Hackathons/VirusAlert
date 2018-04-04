@@ -8,9 +8,6 @@ Goal: To find viruses, both novel and known, in PacBio generated long read metag
 
 Methods: Validation of viral presence using VirFinder is followed by use of BLASTn to determin the orgin family of virus.
 
-https://docs.google.com/presentation/d/125WTRdU_TjUtEwrDlG9p-orZDJxauGQl7ojDjvmwlMI/edit?usp=sharing
-
-
 
 Bioreactor Use
 -------------
@@ -52,21 +49,29 @@ Usage
 Run [virusalert.py][2]. 
 
 [1]: install.sh
-[2]: longreadviruses.py
+[2]: virusalert.py.py
 [3]: usage.txt
 
 
 Command Line Options for virusalert.py:
+```
+virusalert.py -X
+-h|--help  Print this help text. ---
 
--h|--help  Print this help text.
 -v         Print debugging information. [default: true]
+
 -i INPUTS  One or more SRR numbers or fastq/a file paths as input,
            e.g. SRR5150787 or testfile.fq [default: SRR5150787]
+           
 -t INTYPE  Type of input provided - can be either srr, fasta or fastq
            [default: srr]
+           
+          
 -c CONTDB  Contamination database to use. Default is to download and
            install the RefSeq viral database.
+           
 -o OUTDIR  Working directory and where to save results [default: analysis]
+```
 
 Inputs
 ------

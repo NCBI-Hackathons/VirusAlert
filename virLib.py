@@ -254,7 +254,7 @@ class VirLib(object):
         # fetch a fastq local path
         fastx_path = self.processInput(type=type, input=input)
 
-        if type == 'fastq':
+        if type == 'fastq' or type == 'srr':
             # return a list of BioPython objects representing each fastq entry in the file
             entries = self.entriesFromFastq(fastq=fastx_path)
         elif type == 'fasta':
@@ -275,26 +275,3 @@ class VirLib(object):
                 f.write(s)
                 f.write('\n')
                 print(s)
-
-# # TESTING inputs with SRR fetching
-# v = VirLib()
-# rv1 = v.process_input(type='fasta', input='input.fa')
-# print(rv1)
-# rv2 = v.process_input(type='srr', input='SRR5150787')
-# print(rv2)
-
-# # TESTING biopython BLAST API
-# v = VirLib()
-# rv2 = v.process_inputs(type='srr', input='SRR5383888')
-# print(rv2)
-# v.blast_API_search(rv2, output_xml_path= 'default.xml')
-
-# TESTING Batch Fetching
-# v = VirLib()
-# x = ['SRR6172655', 'SRR6172653', 'SRR5383891', 'SRR5383888']
-# for i in x:
-#     v.process_inputs(type='srr', input=i)
-
-# TESTING SPECIES FROM ACCESSION
-# v = VirLib()
-# v.organismNamefromGenBankAccession('KY881787.1')
