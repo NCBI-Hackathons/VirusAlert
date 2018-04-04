@@ -4,6 +4,9 @@ from docopt import docopt
 from virLib import VirLib
 
 def parse(args):
+    contdb = args['-d']
+    if contdb is None:
+        contdb = os.path.join(os.path.realpath(__file__), '../data/viralg')
     return {
         'verbose' : args['-v'],
         'input'   : args['-i'],
@@ -12,6 +15,10 @@ def parse(args):
         'outdir'  : args['-o'],
         'intype'  : args['-t']
     }
+
+def contdb(args):
+    if not args['contdb']:
+        return
 
 def virfinder(args):
     cmd = ["runVirFinder.R", args['input'], args['pvalue']]
