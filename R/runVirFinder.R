@@ -8,6 +8,9 @@ args = commandArgs(trailingOnly=TRUE)
 library("tidyverse")
 library(VirFinder)
 
+# fasta.inputfile ="data/SRR5383888.fa"
+# threshold=0.95
+
 fasta.inputfile <- args[1]
 threshold <- args[2]
 
@@ -19,7 +22,8 @@ write.table(pred.result, "virfinder_hits.csv", quote = F, sep=",", col.names=F)
 
 ggplot(pred.result, aes(x=fname, y=score))+
   geom_point()+
-  geom_hline(yintercept = threshold, color="red")+
+  ylim(c(0,1))+
+  geom_hline(yintercept = as.numeric(threshold), color="red")+
   theme_bw()+
   xlab("read index")+
   ylab("")
