@@ -66,7 +66,7 @@ class VirLib(object):
         :return:
         """
         print('Processing Inputs.')
-        if type == 'fasta':
+        if type == 'fasta' or type == 'fastq':
             assert (input.endswith('.fasta') or
                     input.endswith('.fa') or
                     input.endswith('.fastq') or
@@ -228,6 +228,21 @@ class VirLib(object):
                 entries.append(record)
         return entries
 
+    def entriesFromFasta(self, fasta):
+        """
+        fasta files may have multiple entries.  This returns a list of BioPython record objects
+        associated with each fasta entry.
+
+        :param fasta:
+        :return:
+        """
+        print('Fetching Entries from Fasta.')
+        entries = []
+        with open(fasta, "rU") as handle:
+            for record in SeqIO.parse(handle, "fasta"):
+                entries.append(record)
+        return entries
+
     def run(self, type='srr', input='SRR6172653'):
         """
 
@@ -237,9 +252,15 @@ class VirLib(object):
         max_entries = 1
 
         # fetch a fastq local path
-        fastq_path = self.processInput(type=type, input=input)
-        # return a list of BioPython objects representing each fastq entry in the file
-        entries = self.entriesFromFastq(fastq=fastq_path)
+        fastx_path = self.processInput(type=type, input=input)
+
+        if type == 'fastq':
+            # return a list of BioPython objects representing each fastq entry in the file
+            entries = self.entriesFromFastq(fastq=fastx_path)
+        elif type == 'fasta':
+            # return a list of BioPython objects representing each fastq entry in the file
+            entries = self.entriesFromFasta(fasta=fastx_path)
+
         # BLAST, generate an XML, and parse to obtain the first species hit
         list_of_species = []
         for record in entries[:max_entries]:
