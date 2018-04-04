@@ -8,9 +8,6 @@ Goal: To find viruses, both novel and known, in PacBio generated long read metag
 
 Methods: Validation of viral presence using VirFinder is followed by use of BLASTn to determin the orgin family of virus.
 
-https://docs.google.com/presentation/d/125WTRdU_TjUtEwrDlG9p-orZDJxauGQl7ojDjvmwlMI/edit?usp=sharing
-
-
 
 Bioreactor Use
 -------------
