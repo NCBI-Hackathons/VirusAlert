@@ -2,6 +2,7 @@
 
 from docopt import docopt
 from virLib import VirLib
+from Bio import SeqIO
 import os
 
 def parse(args):
