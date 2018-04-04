@@ -36,6 +36,12 @@ At the heart of VirusAlert is VirFinder. A k-mer based virus detection software 
 BLASTn
 -----
 The found viral sequences that the viral k-mers originated from are then run using BLASTn to find possible viral matches in the viral RefSeq database. This information is then returned to the user in a BLAST report detailing the suspected family of any reads that are determined to be viral in origin.
+
+```
+- Runs parallel to VirFinder
+- Runs all reads, not just viral ones
+
+```
  
 
 Install
@@ -91,6 +97,12 @@ Threshold [Optional] : minimum P-value for a non contaminated output
 Summary Output
 ------------
  <img src="./images/SampleGraph.png" width="900">
+ 
+X axis: PacBio reads from soil sample
+Y axis: P-values corresponding to x axis soil samples
+
+Soil sample reads were used to create a standard curve for viral infection to interpret our HBV_control and HBV_sample. The HBV_control, depicted in blue, has a p value of ~.65. The infected cells have a p-value of ~.135 indicating that our HBV_sample indeed contains viral reads. 
+ 
  
 
 Citations
