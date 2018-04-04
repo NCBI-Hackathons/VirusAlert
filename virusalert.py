@@ -64,8 +64,6 @@ def virfinder(args):
             args['cutoff']]
     check_call(cmd)
 
-# def virlib(args):
-
 def main():
     with open('usage.txt', 'r') as f:
         args = parse(v, docopt(f.read(), version='virusalert 1.0'))
