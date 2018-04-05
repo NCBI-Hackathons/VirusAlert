@@ -105,6 +105,9 @@ Soil sample reads were used to create a standard curve for viral infection to in
  Sample Output
  ------------
   <img src="./images/HBV_soil.png" width="900">
+  
+  <img src="./images/image.png" width="900">
+
 
  
 
