@@ -22,6 +22,10 @@ def parseFastaHeaders(input_fasta):
                 for i in line_parts:
                     if i.startswith('NC_'):
                         list_o_NC.append(i)
+    with open('NC_output.txt', 'w') as f:
+        for j in list_o_NC:
+            f.write(j)
+            f.write('\n')
     return list_o_NC
 
 def parse(v, args):
