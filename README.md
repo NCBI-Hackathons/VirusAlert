@@ -102,6 +102,11 @@ Y axis: P-values corresponding to x axis soil samples
 Soil sample reads were used to create a standard curve for viral infection to interpret our HBV_control and HBV_sample. The HBV_control, depicted in blue, has a p value of ~.65. The infected cells have a p-value of ~.135 indicating that our HBV_sample indeed contains viral reads. 
  
  
+ Sample Output
+ ------------
+  <img src="./images/HBV_soil.png" width="900">
+
+ 
 
 Citations
 ---------
