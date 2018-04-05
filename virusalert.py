@@ -13,6 +13,17 @@ def datapath(path):
 def toolpath(path):
     return join(dirname(realpath(__file__)), 'tools', path)
 
+def parseFastaHeaders(input_fasta):
+    list_o_NC = []
+    with open(input_fasta, 'r') as f:
+        for line in f:
+            if line.startswith('>'):
+                line_parts = line.split('|')
+                for i in line_parts:
+                    if i.startswith('NC_'):
+                        list_o_NC.append(i)
+    return list_o_NC
+
 def parse(v, args):
     contdb = args['-d']
     if not contdb:
