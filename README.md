@@ -17,7 +17,7 @@ By running clean cell cultures through LRV, users can set a baseline p-value for
  
  Workflow
  -------
- <img src="./images/Modified_Final_Workflow.png" width="900">
+ <img src="./images/workflow_final_v2.png" width="900">
 
 VirFinder
 ---------
