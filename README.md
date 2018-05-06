@@ -23,6 +23,7 @@ VirFinder
 ---------
 At the heart of VirusAlert is VirFinder. A k-mer based virus detection software that implements machine learning to allow users to isolate viral reads from host reads. VirFinder is, by default, trained on viral sequences from a 2014 viral sequence database. VirFinder then uses machine learning algorithms to find possible viral k-mers within the reads. Based on the training data and inputs, VirFinder outputs possible viral reads and p-values between 0 and 1; 1 means there is no virus, 0 means there is virus. These p-values are then compared against the user inputed threshold value to determine if there is enough data to assume if virus is present.
 ```
+VirFinder
 - Machine Learning using viral k-mers
 - Identifies viral k-mers within viral reads
 - Our workhorse viral idenification method
